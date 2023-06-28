@@ -43,6 +43,10 @@ from syncall.cli import (
     opt_tw_project,
     opt_tw_tags,
 )
+
+import pprint
+
+#pp = pprint.PrettyPrinter(indent=4)
 ##
 ##
 ## CLI parsing ---------------------------------------------------------------------------------
@@ -64,6 +68,7 @@ from syncall.cli import (
 @opt_list_combinations("TW", "Microsoft Todo")
 @opt_custom_combination_savename("TW", "Microsoft Todo")
 @click.option("-t", "--token_location")
+@click.option("-l", "--list_name")
 #@click.argument('token')
 #@opt_resolution_strategy()
     #token_pass_path: str
@@ -71,17 +76,24 @@ def main(verbose: int,
     combination_name: str,
     do_list_combinations: bool,
     custom_combination_savename: str,
-    token_location: str):
-    print("test", verbose, "token: ", token_location)
+    token_location: str,
+    list_name: str):
+    #print("test", verbose, "token: ", token_location)
     token_file = open(token_location, "r")
     token_str = token_file.read()
-    print("token_str: ", token_str)
+    #print("token_str: ", token_str)
     client_id = token_str.split("\n")[0]
     client_secret = token_str.split("\n")[1]
+    token_json = ""
+    if len(token_str) >= 3:
+        token_json = token_str.split("\n")[2]
 
-    microsoft_todo_side = MicrosoftTodoSide(client_id=client_id, client_secret=client_secret, auth_again=True)
+    #print("token_json: ", token_json)
+    microsoft_todo_side = MicrosoftTodoSide(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
 
-    print("Get All items: ", microsoft_todo_side.get_all_items())
+    all_items = microsoft_todo_side.get_all_items()
+    print("Get All items: ", all_items, "\n\n")
+    print("Get One item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
     
     
     token_file.close()
