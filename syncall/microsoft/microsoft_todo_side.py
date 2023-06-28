@@ -94,8 +94,8 @@ class MicrosoftTodoSide(SyncSide):
         """Add a new item.
         :returns: The newly added event
         """
-        raise NotImplementedError("Implement in derived")
-     
+        new_task = self._todo_client.create_task(item.title, self._list_id, due_date=item.due_date, body_text=item.body_text)
+        return new_task
     def id_key(cls) -> str:
         """
         Key in the dictionary of the added/updated/deleted item that refers to the ID of

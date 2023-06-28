@@ -2,6 +2,7 @@
 import os
 import sys
 from typing import List
+from pymstodo import Task as MicrosoftTodoTask
 
 import click
 #from bubop import (
@@ -101,6 +102,9 @@ def main(verbose: int,
     print("Updating task: ", all_items[1])
     #all_items[1].title = "NEW_TITLE_THAT_IS_SUPER_COOL"
     microsoft_todo_side.update_item(item_id=all_items[1].task_id, title="NEW_TITLE_THAT_IS_SUPER_COOL")
+    microsoft_todo_side.add_item(item=MicrosoftTodoTask(title="test_title"))
+    print("added task test_title")
+
     token_file.close()
 #def main(
 #    microsoft_todo_id: str,
