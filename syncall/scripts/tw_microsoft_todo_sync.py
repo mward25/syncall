@@ -93,9 +93,14 @@ def main(verbose: int,
 
     all_items = microsoft_todo_side.get_all_items()
     print("Get All items: ", all_items, "\n\n")
-    print("Get One item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
-    
-    
+    print("Getting one item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
+    print("Deleting one item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
+    microsoft_todo_side.delete_single_item(item_id=all_items[1].task_id)
+    # Update our all_items variable so we don't have the deleted value any more
+    all_items = microsoft_todo_side.get_all_items()
+    print("Updating task: ", all_items[1])
+    #all_items[1].title = "NEW_TITLE_THAT_IS_SUPER_COOL"
+    microsoft_todo_side.update_item(item_id=all_items[1].task_id, title="NEW_TITLE_THAT_IS_SUPER_COOL")
     token_file.close()
 #def main(
 #    microsoft_todo_id: str,

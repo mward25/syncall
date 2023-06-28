@@ -80,7 +80,7 @@ class MicrosoftTodoSide(SyncSide):
         """Delete an item based on the given UUID.
         .. raises:: Keyerror if item is not found.
         """
-        raise NotImplementedError("Should be implemented in derived")
+        self._todo_client.delete_task(list_id=self._list_id, task_id=item_id)
      
     def update_item(self, item_id: ID, **changes):
         """Update with the given item.
@@ -88,7 +88,7 @@ class MicrosoftTodoSide(SyncSide):
         :param changes: Keyword only parameters that are to change in the item
         .. warning:: The item must already be present
         """
-        raise NotImplementedError("Should be implemented in derived")
+        self._todo_client.update_task(task_id=item_id, list_id=self._list_id, **changes)
      
     def add_item(self, item: MicrosoftTodoTask) -> MicrosoftTodoTask:
         """Add a new item.

@@ -74,8 +74,8 @@ rfc3339 = "^6.2"
 typing = "^3.7.4"
 item-synchronizer = "^1.1.4"
 bubop = { version = "0.1.10", allow-prereleases = true }
-#pymstodo = "^0.1.4"
-pymstodo = {git = "https://github.com/mward25/pymstodo.git", rev = "support_subtasks"}
+pymstodo = "^0.1.4"
+#pymstodo = {git = "https://github.com/mward25/pymstodo.git", rev = "support_subtasks"}
 
 [tool.poetry.extras]
 google = ["google-api-python-client", "google-auth-oauthlib"]
