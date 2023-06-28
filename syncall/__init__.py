@@ -187,4 +187,18 @@ try:
 except ImportError:
     pass
 
+
+# Taskwarrior <> microsoft_todo --------------------------------------------------------------------------
+try:
+    from syncall.microsoft.microsoft_todo_side import MicrosoftTodoSide
+    #from syncall.filesystem_gkeep_utils import (
+    #    convert_filesystem_file_to_gkeep_note,
+    #    convert_gkeep_note_to_filesystem_file,
+    #)
+
+    #__all__.extend(
+    #    ["convert_filesystem_file_to_gkeep_note", "convert_gkeep_note_to_filesystem_file"]
+    #)
+except ImportError:
+    pass
 __version__ = "1.5.1"

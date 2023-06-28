@@ -45,6 +45,7 @@ tw_gkeep_sync = "syncall.scripts.tw_gkeep_sync:main"
 tw_notion_sync = "syncall.scripts.tw_notion_sync:main"
 fs_gkeep_sync = "syncall.scripts.fs_gkeep_sync:main"
 tw_caldav_sync = "syncall.scripts.tw_caldav_sync:main"
+tw_microsoft_todo_sync = "syncall.scripts.tw_microsoft_todo_sync:main"
 
 # end-user dependencies --------------------------------------------------------
 [tool.poetry.dependencies]
@@ -73,6 +74,7 @@ rfc3339 = "^6.2"
 typing = "^3.7.4"
 item-synchronizer = "^1.1.4"
 bubop = { version = "0.1.10", allow-prereleases = true }
+pymstodo = "^0.1.4"
 
 [tool.poetry.extras]
 google = ["google-api-python-client", "google-auth-oauthlib"]
