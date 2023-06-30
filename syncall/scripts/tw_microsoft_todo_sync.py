@@ -130,13 +130,33 @@ def main(verbose: int,
     print("Getting one item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
     print("Deleting one item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
     microsoft_todo_side.delete_single_item(item_id=all_items[1].task_id)
+
     # Update our all_items variable so we don't have the deleted value any more
     all_items = microsoft_todo_side.get_all_items()
     print("Updating task: ", all_items[1])
-    #all_items[1].title = "NEW_TITLE_THAT_IS_SUPER_COOL"
     microsoft_todo_side.update_item(item_id=all_items[1].task_id, title="NEW_TITLE_THAT_IS_SUPER_COOL")
-    microsoft_todo_side.add_item(item=MicrosoftTodoTask(title="test_title"))
+    new_item1 = microsoft_todo_side.add_item(item=MicrosoftTodoTask(title="test_title"))
     print("added task test_title")
+
+    # Update our all_items variable so we don't have the deleted value any more
+    all_items = microsoft_todo_side.get_all_items()
+
+    print("Testing items_are_identical, Items should be identical")
+
+    new_item2 = microsoft_todo_side.add_item(item=MicrosoftTodoTask(title="test_title"))
+
+    if microsoft_todo_side.items_are_identical(item1=new_item1, item2=new_item2, ignore_keys=["task_id", "created_date", "createdDateTime", "last_mod_date", "lastModifiedDateTime"]):
+        print("items where identical :)")
+    else:
+        print("items where not identical :(")
+    print("Testing items_are_identical, Items should NOT be identical")
+
+    if microsoft_todo_side.items_are_identical(item1=new_item1, item2=new_item2, ignore_keys=["task_id"]):
+        print("items where identical :(")
+    else:
+        print("items where not identical :)")
+
+    
 
     token_file.close()
 #def main(

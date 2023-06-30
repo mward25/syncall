@@ -21,6 +21,11 @@ def extract_list_with_name(name_to_get: str, input_list: list):
         if i.displayName == name_to_get:
             return i
     return None
+def list_has_key(the_list: Sequence, the_key: str):
+    for i in the_list:
+        if i == the_key:
+            return True
+    return False
 
 class MicrosoftTodoSide(SyncSide):
     def __init__(
@@ -108,15 +113,15 @@ class MicrosoftTodoSide(SyncSide):
         Key in the dictionary of the added/updated/deleted item that refers to the ID of
         that Item.
         """
-        raise NotImplementedError("Implement in derived")
+        return "task_id"
      
     def summary_key(cls) -> str:
         """Key in the dictionary of the item that refers to its summary."""
-        raise NotImplementedError("Implement in derived")
+        return "title"
     
     def last_modification_key(cls) -> str:
         """Key in the dictionary of the item that refers to its modification date."""
-        raise NotImplementedError("Implement in derived")
+        return "last_mod_date"
      
     def items_are_identical(
         cls, item1: MicrosoftTodoTask, item2: MicrosoftTodoTask, ignore_keys: Sequence[str] = []
@@ -125,8 +130,67 @@ class MicrosoftTodoSide(SyncSide):
      
         .. returns:: True if items are identical, False otherwise.
         """
-        raise NotImplementedError("Implement in derived")
+        returnValue = True
+        if ( not list_has_key(ignore_keys, "body_text") ) and item1.body_text != item2.body_text:
+            returnValue = False
+            print("item1.", "body_text", "!= item2.", "body_text") 
+        if ( not list_has_key(ignore_keys, "categories") ) and item1.categories != item2.categories:
+            returnValue = False
+            print("item1.", "categories", "!= item2.", "categories") 
+        if ( not list_has_key(ignore_keys, "completedDateTime") ) and item1.completedDateTime != item2.completedDateTime:
+            returnValue = False
+            print("item1.", "completedDateTime", "!= item2.", "completedDateTime") 
+        if ( not list_has_key(ignore_keys, "completed_date") ) and item1.completed_date != item2.completed_date:
+            returnValue = False
+            print("item1.", "completed_date", "!= item2.", "completed_date") 
+        if ( not list_has_key(ignore_keys, "createdDateTime") ) and item1.createdDateTime != item2.createdDateTime:
+            returnValue = False
+            print("item1.", "createdDateTime", "!= item2.", "createdDateTime") 
+        if ( not list_has_key(ignore_keys, "created_date") ) and item1.created_date != item2.created_date:
+            returnValue = False
+            print("item1.", "created_date", "!= item2.", "created_date") 
+        if ( not list_has_key(ignore_keys, "due_date") ) and item1.due_date != item2.due_date:
+            returnValue = False
+            print("item1.", "due_date", "!= item2.", "due_date") 
+        if ( not list_has_key(ignore_keys, "hasAttachments") ) and item1.hasAttachments != item2.hasAttachments:
+            returnValue = False
+            print("item1.", "hasAttachments", "!= item2.", "hasAttachments") 
+        if ( not list_has_key(ignore_keys, "importance") ) and item1.importance != item2.importance:
+            returnValue = False
+            print("item1.", "importance", "!= item2.", "importance") 
+        if ( not list_has_key(ignore_keys, "isReminderOn") ) and item1.isReminderOn != item2.isReminderOn:
+            returnValue = False
+            print("item1.", "isReminderOn", "!= item2.", "isReminderOn") 
+        if ( not list_has_key(ignore_keys, "lastModifiedDateTime") ) and item1.lastModifiedDateTime != item2.lastModifiedDateTime:
+            returnValue = False
+            print("item1.", "lastModifiedDateTime", "!= item2.", "lastModifiedDateTime") 
+        if ( not list_has_key(ignore_keys, "last_mod_date") ) and item1.last_mod_date != item2.last_mod_date:
+            returnValue = False
+            print("item1.", "last_mod_date", "!= item2.", "last_mod_date") 
+        if ( not list_has_key(ignore_keys, "reminderDateTime") ) and item1.reminderDateTime != item2.reminderDateTime:
+            returnValue = False
+            print("item1.", "reminderDateTime", "!= item2.", "reminderDateTime") 
+        if ( not list_has_key(ignore_keys, "reminder_date") ) and item1.reminder_date != item2.reminder_date:
+            returnValue = False
+            print("item1.", "reminder_date", "!= item2.", "reminder_date") 
+        if ( not list_has_key(ignore_keys, "startDateTime") ) and item1.startDateTime != item2.startDateTime:
+            returnValue = False
+            print("item1.", "startDateTime", "!= item2.", "startDateTime") 
+        if ( not list_has_key(ignore_keys, "start_date") ) and item1.start_date != item2.start_date:
+            returnValue = False
+            print("item1.", "start_date", "!= item2.", "start_date") 
+        if ( not list_has_key(ignore_keys, "task_id") ) and item1.task_id != item2.task_id:
+            returnValue = False
+            print("item1.", "task_id", "!= item2.", "task_id") 
+        if ( not list_has_key(ignore_keys, "task_status") ) and item1.task_status != item2.task_status:
+            returnValue = False
+            print("item1.", "task_status", "!= item2.", "task_status") 
+        if ( not list_has_key(ignore_keys, "title") ) and item1.title != item2.title:
+            returnValue = False
+            print("item1.", "title", "!= item2.", "title") 
+        return returnValue
 
+        #return  item1.expires_in == item2.expires_in and item1.expires_at == item2.expires_at
 
 #[
 #    TaskList(list_id='AQMkADAwATM0MDAAMS0yNzRmLWQxZjQtMDACLTAwCgAuAAADUaLGNp8M60W4FQEdV6wGCQEAinlZ3v-HfEKHI4RZNx9RFAAAAgESAAAA', displayName='Tasks', isOwner=True, isShared=False, wellknownListName='defaultList'),
