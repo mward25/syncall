@@ -14,7 +14,7 @@ class Dict2Class(object):
             setattr(self, key, my_dict[key])
 
 def str_to_token(input_str: str):
-    return ast.literal_eval(input_str)
+    return json.loads(input_str)
 
 def extract_list_with_name(name_to_get: str, input_list: list):
     for i in input_list:
@@ -25,12 +25,21 @@ def extract_list_with_name(name_to_get: str, input_list: list):
 class MicrosoftTodoSide(SyncSide):
     def __init__(
             self,
+    ):
+        pass
+        #super().__init__(**kargs)
+
+    
+    def start(self,
             client_id: str,
             client_secret: str,
             token: str,
-            list_name: str
-    ):
-        #super().__init__(**kargs)
+            list_name: str) -> str:
+        """Initialization steps.
+        Call this manually. Derived classes can take care of setting up data
+        structures / connection, authentication requests etc.
+        Returns the token
+        """
         self._client_id = client_id
         self._client_secret = client_secret
         self._list_name = list_name
@@ -41,18 +50,16 @@ class MicrosoftTodoSide(SyncSide):
             auth_url = ToDoConnection.get_auth_url(client_id)
             redirect_resp = input(f'Go here and authorize:\n{auth_url}\n\nPaste the full redirect URL below:\n')
             token = ToDoConnection.get_token(client_id, client_secret, redirect_resp)
-            print("Please put this token on the third line of your config file: ", token)
-        self._token = str_to_token(token)
+            self._token = token
+        else:
+            self._token = str_to_token(token)
         self._todo_client = pymstodo.ToDoConnection(client_id=client_id, client_secret=client_secret, token=self._token)
         
         self._list_id = extract_list_with_name(self._list_name, self._todo_client.get_lists()).list_id
-    
-    def start(self):
-        """Initialization steps.
-        Call this manually. Derived classes can take care of setting up data
-        structures / connection, authentication requests etc.
-        """
-        pass
+        if type(token) is str:
+            return token
+        else:
+            return json.dumps(token)
      
     def finish(self):
         """Finalization steps.

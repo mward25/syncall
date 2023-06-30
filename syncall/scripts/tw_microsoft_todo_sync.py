@@ -3,6 +3,8 @@ import os
 import sys
 from typing import List
 from pymstodo import Task as MicrosoftTodoTask
+import oauthlib
+import json
 
 import click
 #from bubop import (
@@ -90,7 +92,38 @@ def main(verbose: int,
         token_json = token_str.split("\n")[2]
 
     #print("token_json: ", token_json)
-    microsoft_todo_side = MicrosoftTodoSide(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+    microsoft_todo_side = None
+    try:
+        write_token = False
+        if token_json == "":
+            write_token = True
+        microsoft_todo_side = MicrosoftTodoSide()
+        token_json = microsoft_todo_side.start(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+        if write_token:
+            token_file.close()
+            token_file = open(token_location, "w")
+            token_file.write(client_id + "\n" + client_secret + "\n" + token_json)
+            token_file.close()
+            # Re-open as read only, just in case other parts of the script want to read from the file
+            token_file = open(token_location, "r")
+    except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
+        token_str = client_id + "\n" + client_secret + "\n" 
+        client_id = token_str.split("\n")[0]
+        client_secret = token_str.split("\n")[1]
+        token_json = ""
+        
+        microsoft_todo_side = MicrosoftTodoSide()
+        token_json = microsoft_todo_side.start(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+        token_file.close()
+        token_file = open(token_location, "w")
+        token_str = client_id + "\n" + client_secret + "\n" + token_json
+        token_file.write(json.dumps(token_str))
+        token_file.close()
+        # Re-open as read only, just in case other parts of the script want to read from the file
+        token_file = open(token_location, "r")
+
+
+
 
     all_items = microsoft_todo_side.get_all_items()
     print("Get All items: ", all_items, "\n\n")
