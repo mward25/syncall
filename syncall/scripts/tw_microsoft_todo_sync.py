@@ -112,9 +112,9 @@ def main(verbose: int,
             # Re-open as read only, just in case other parts of the script want to read from the file
             token_file = open(token_location, "r")
     except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
-        token_str = client_id + "\n" + client_secret + "\n" 
-        client_id = token_str.split("\n")[0]
-        client_secret = token_str.split("\n")[1]
+        #token_str = client_id + "\n" + client_secret + "\n" 
+        #client_id = token_str.split("\n")[0]
+        #client_secret = token_str.split("\n")[1]
         token_json = ""
         
         microsoft_todo_side = MicrosoftTodoSide()
