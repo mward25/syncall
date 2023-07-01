@@ -30,24 +30,28 @@ def list_has_key(the_list: Sequence, the_key: str):
 class MicrosoftTodoSide(SyncSide):
     def __init__(
             self,
-    ):
-        pass
-        #super().__init__(**kargs)
-
-    
-    def start(self,
             client_id: str,
             client_secret: str,
             token: str,
-            list_name: str) -> str:
+            list_name: str):
+        super().__init__(name="MicrosoftTodo", fullname="MicrosoftTodo")
+        self._client_id = client_id
+        self._client_secret = client_secret
+        self._list_name = list_name
+        self._token = token
+        #super().__init__(**kargs)
+
+    
+    def start(self) -> str:
         """Initialization steps.
         Call this manually. Derived classes can take care of setting up data
         structures / connection, authentication requests etc.
         Returns the token
         """
-        self._client_id = client_id
-        self._client_secret = client_secret
-        self._list_name = list_name
+        token = self._token
+        client_id = self._client_id
+        client_secret = self._client_secret
+        list_name = self._list_name
         redirect_resp = "https://localhost/login/authorized"
         ToDoConnection._scope = "profile email openid Tasks.ReadWrite Tasks.ReadWrite.Shared"
         # If the token is empty, it means that we need to authenticate to get a token
@@ -55,6 +59,8 @@ class MicrosoftTodoSide(SyncSide):
             auth_url = ToDoConnection.get_auth_url(client_id)
             redirect_resp = input(f'Go here and authorize:\n{auth_url}\n\nPaste the full redirect URL below:\n')
             token = ToDoConnection.get_token(client_id, client_secret, redirect_resp)
+            self._token = token
+        elif type(token) is dict:
             self._token = token
         else:
             self._token = str_to_token(token)

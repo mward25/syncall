@@ -9,14 +9,14 @@ def priority_to_importance(importance):
         return 'normal'
     elif importance == 'L':
         return 'low'
-    elif importance == None:
+    elif importance == '':
         return 'normal'
 
 def importance_to_priority(priority):
     if priority == 'high':
         return 'H'
     elif priority == 'normal':
-        return None
+        return 'M'
     elif priority == 'low':
         return 'L'
     elif priority == None:
@@ -73,7 +73,7 @@ def convert_tw_to_microsoft_todo(tw_item: TwItem) -> MicrosoftTodoSide:
     return return_value
 
 def convert_microsoft_todo_to_tw(microsoft_todo_item: MicrosoftTodoTask) -> TwItem:
-    return_value = TwItem()
+    return_value = dict()
     # return title from description
     return_value['description'] = microsoft_todo_item.title
     # return task_status from status

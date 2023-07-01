@@ -42,6 +42,7 @@ from syncall import (
     list_named_combinations,
     report_toplevel_exception,
     MicrosoftTodoSide,
+    TaskWarriorSide
 )
 from syncall.cli import (
     opt_combination,
@@ -65,7 +66,7 @@ import pprint
 ##@opt_tw_tags()
 ##@opt_tw_project()
 ### misc options --------------------------------------------------------------------------------
-##@opt_resolution_strategy()
+@opt_resolution_strategy()
 ##@opt_combination("TW", "Notion")
 ##@opt_list_combinations("TW", "Notion")
 ##@opt_custom_combination_savename("TW", "Notion")
@@ -77,6 +78,9 @@ import pprint
 @opt_custom_combination_savename("TW", "Microsoft Todo")
 @click.option("-t", "--token_location")
 @click.option("-l", "--list_name")
+@click.option("-T", "--tw-tags")
+@click.option("-p", "--tw-project")
+@opt_resolution_strategy()
 #@click.argument('token')
 #@opt_resolution_strategy()
     #token_pass_path: str
@@ -85,7 +89,10 @@ def main(verbose: int,
     do_list_combinations: bool,
     custom_combination_savename: str,
     token_location: str,
-    list_name: str):
+    list_name: str,
+    tw_tags: str,
+    tw_project: str,
+    resolution_strategy: str):
     #print("test", verbose, "token: ", token_location)
     token_file = open(token_location, "r")
     token_str = token_file.read()
@@ -95,15 +102,17 @@ def main(verbose: int,
     token_json = ""
     if len(token_str) >= 3:
         token_json = token_str.split("\n")[2]
+    # initialize taskwarrior ------------------------------------------------------------------
+    tw_side = TaskWarriorSide(tags=tw_tags, project=tw_project)
 
-    #print("token_json: ", token_json)
+    # initialize microsoft_todo ----------------------------------------------------------------
     microsoft_todo_side = None
     try:
         write_token = False
         if token_json == "":
             write_token = True
-        microsoft_todo_side = MicrosoftTodoSide()
-        token_json = microsoft_todo_side.start(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+        microsoft_todo_side = MicrosoftTodoSide(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+        token_json = microsoft_todo_side.start()
         if write_token:
             token_file.close()
             token_file = open(token_location, "w")
@@ -117,45 +126,46 @@ def main(verbose: int,
         #client_secret = token_str.split("\n")[1]
         token_json = ""
         
-        microsoft_todo_side = MicrosoftTodoSide()
-        token_json = microsoft_todo_side.start(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+        microsoft_todo_side = MicrosoftTodoSide(client_id=client_id, client_secret=client_secret, token=token_json, list_name=list_name)
+        token_json = microsoft_todo_side.start()
         token_file.close()
         token_file = open(token_location, "w")
-        token_str = client_id + "\n" + client_secret + "\n" + token_json
-        token_file.write(json.dumps(token_str))
+        token_str = client_id + "\n" + client_secret + "\n" + json.dumps(token_json)
+        token_file.write(token_str)
         token_file.close()
         # Re-open as read only, just in case other parts of the script want to read from the file
         token_file = open(token_location, "r")
-#    # sync ------------------------------------------------------------------------------------
-#    try:
-#        with Aggregator(
-#            side_A=notion_side,
-#            side_B=tw_side,
-#            converter_B_to_A=convert_tw_to_notion,
-#            converter_A_to_B=convert_notion_to_tw,
-#            resolution_strategy=get_resolution_strategy(
-#                resolution_strategy, side_A_type=type(notion_side), side_B_type=type(tw_side)
-#            ),
-#            config_fname=combination_name,
-#            ignore_keys=(
-#                ("last_modified_date",),
-#                ("due", "end", "entry", "modified", "urgency"),
-#            ),
-#        ) as aggregator:
-#            aggregator.sync()
-#    except KeyboardInterrupt:
-#        logger.error("Exiting...")
-#        return 1
-#    except:
-#        report_toplevel_exception(is_verbose=verbose >= 1)
-#        return 1
-#
-#    if inform_about_config:
-#        inform_about_combination_name_usage(combination_name)
+    # sync ------------------------------------------------------------------------------------
+    # ignore categories, isReminderOn, hasAttachments, urgency, imask, parent, id, depends, wait, tags, recur, project, until  
+    try:
+        with Aggregator(
+            side_A=microsoft_todo_side,
+            side_B=tw_side,
+            converter_B_to_A=convert_tw_to_microsoft_todo,
+            converter_A_to_B=convert_microsoft_todo_to_tw,
+            resolution_strategy=get_resolution_strategy(
+                resolution_strategy, side_A_type=type(microsoft_todo_side), side_B_type=type(tw_side)
+            ),
+            config_fname=combination_name,
+            ignore_keys=(
+                ('task_id', 'categories', 'isReminderOn', 'hasAttachments'),
+                ('urgency', 'imask', 'parent', 'id', 'depends', 'wait', 'tags', 'recur', 'project', 'until'),
+            ),
+        ) as aggregator:
+            aggregator.sync()
+    except KeyboardInterrupt:
+        logger.error("Exiting...")
+        return 1
+    except:
+        report_toplevel_exception(is_verbose=verbose >= 1)
+        return 1
+
+    #if inform_about_config:
+    #    inform_about_combination_name_usage(combination_name)
 
 
-
-
+    # Old tests: 
+    """
     all_items = microsoft_todo_side.get_all_items()
     print("Get All items: ", all_items, "\n\n")
     print("Getting one item: ", microsoft_todo_side.get_item(item_id=all_items[1].task_id), "\n\n")
@@ -186,6 +196,7 @@ def main(verbose: int,
         print("items where identical :(")
     else:
         print("items where not identical :)")
+    """
 
     
 
