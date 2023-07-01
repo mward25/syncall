@@ -26,6 +26,11 @@ import click
 #
 #from notion_client import Client  # type: ignore
 #
+
+#import tw_microsoft_todo_utils
+
+from syncall.tw_microsoft_todo_utils import convert_tw_to_microsoft_todo
+from syncall.tw_microsoft_todo_utils import convert_microsoft_todo_to_tw
 from syncall import (
     Aggregator,
     __version__,
@@ -36,7 +41,7 @@ from syncall import (
     inform_about_combination_name_usage,
     list_named_combinations,
     report_toplevel_exception,
-    MicrosoftTodoSide
+    MicrosoftTodoSide,
 )
 from syncall.cli import (
     opt_combination,
@@ -121,6 +126,32 @@ def main(verbose: int,
         token_file.close()
         # Re-open as read only, just in case other parts of the script want to read from the file
         token_file = open(token_location, "r")
+#    # sync ------------------------------------------------------------------------------------
+#    try:
+#        with Aggregator(
+#            side_A=notion_side,
+#            side_B=tw_side,
+#            converter_B_to_A=convert_tw_to_notion,
+#            converter_A_to_B=convert_notion_to_tw,
+#            resolution_strategy=get_resolution_strategy(
+#                resolution_strategy, side_A_type=type(notion_side), side_B_type=type(tw_side)
+#            ),
+#            config_fname=combination_name,
+#            ignore_keys=(
+#                ("last_modified_date",),
+#                ("due", "end", "entry", "modified", "urgency"),
+#            ),
+#        ) as aggregator:
+#            aggregator.sync()
+#    except KeyboardInterrupt:
+#        logger.error("Exiting...")
+#        return 1
+#    except:
+#        report_toplevel_exception(is_verbose=verbose >= 1)
+#        return 1
+#
+#    if inform_about_config:
+#        inform_about_combination_name_usage(combination_name)
 
 
 
@@ -279,32 +310,6 @@ def main(verbose: int,
 #    microsoft_todo_side = MicrosoftTodoSide(client=client, page_id=microsoft_todo_side)
 #    print(microsoft_todo_side.get_all_items())
 #
-#    # sync ------------------------------------------------------------------------------------
-#    try:
-#        with Aggregator(
-#            side_A=notion_side,
-#            side_B=tw_side,
-#            converter_B_to_A=convert_tw_to_notion,
-#            converter_A_to_B=convert_notion_to_tw,
-#            resolution_strategy=get_resolution_strategy(
-#                resolution_strategy, side_A_type=type(notion_side), side_B_type=type(tw_side)
-#            ),
-#            config_fname=combination_name,
-#            ignore_keys=(
-#                ("last_modified_date",),
-#                ("due", "end", "entry", "modified", "urgency"),
-#            ),
-#        ) as aggregator:
-#            aggregator.sync()
-#    except KeyboardInterrupt:
-#        logger.error("Exiting...")
-#        return 1
-#    except:
-#        report_toplevel_exception(is_verbose=verbose >= 1)
-#        return 1
-#
-#    if inform_about_config:
-#        inform_about_combination_name_usage(combination_name)
 #
 #    return 0
 

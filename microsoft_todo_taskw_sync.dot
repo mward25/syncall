@@ -1,0 +1,74 @@
+digraph G {
+    rankdir=LR
+    //TaskWarrior -> annotations, depends, description, due, end, entry, id, imask, mask, modified, parent, priority, project, recur, scheduled, start, status, tags, until, urgency, uuid, wait 
+
+    //choices -> pending, completed, deleted, waiting, recurring
+
+     //body_text, categories, completedDateTime, createdDateTime, due_date, hasAttachments, importance, isReminderOn, lastModifiedDateTime, reminderDateTime, startDateTime, task_id, task_status, title -> MSTodo
+    //importance -> low, normal, high
+
+    //normal-> TaskWarrior [label="connection for formatting purposes only"] 
+
+    importance -> priority
+    body_text -> annotations
+    title -> description
+    //categories -> tags
+    categories -> NULL
+
+    due_date -> due
+
+    completedDateTime -> end 
+
+    lastModifiedDateTime -> modified
+
+    isReminderOn -> NULL
+    hasAttachments -> NULL
+    reminderDateTime -> annotations
+    task_status -> status
+
+    depends -> body_text
+    startDateTime -> start
+    createdDateTime -> entry
+    uuid -> body_text
+
+    urgency -> NULL
+    wait -> body_text
+    mask -> body_text
+    imask -> NULL
+
+    parent -> NULL
+
+    end -> completedDateTime
+    id -> NULL
+
+    tags -> body_text
+
+    recur -> body_text
+
+    entry -> createdDateTime
+    modified -> lastModifiedDateTime
+    start -> startDateTime
+    annotations -> reminderDateTime
+    status -> task_status
+    project -> body_text
+    body_text -> project
+    until -> body_text
+    body_text -> until
+
+    description -> title
+    //project -> importance
+
+    body_text -> recur
+    body_text -> tags
+    body_text -> uuid
+    body_text -> wait
+    body_text -> depends
+    priority -> importance
+    annotations -> body_text
+
+    due -> due_date
+
+
+
+
+}
