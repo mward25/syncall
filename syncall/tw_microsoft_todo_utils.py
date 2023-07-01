@@ -22,13 +22,40 @@ def importance_to_priority(priority):
     elif priority == None:
         return 'L'
 
+def ms_todo_status_to_tw_status(ms_todo_status):
+    if ms_todo_status == 'notStarted':
+        return 'pending'
+    elif ms_todo_status == 'inProgress':
+        return 'pending'
+    elif ms_todo_status == 'completed':
+        return 'return completed'
+    elif ms_todo_status == 'waitingOnOthers':
+        return 'waiting'
+    elif ms_todo_status == 'deferred':
+        return 'deleted'
+    else:
+        # Other wise return pending, as this is the option that is least likely to make a users task disappear, which would be very bad for the user
+        return 'pending'
+def tw_status_to_ms_todo_status(tw_status):
+    if tw_status ==  'pending':
+        return 'inProgress'
+    elif tw_status == 'completed':
+        return 'completed'
+    elif tw_status == 'deleted':
+        return 'deferred'
+    elif tw_status == 'waiting':
+        return 'waiting' 
+    else:
+        # Other wise return inProgress, as this is the option that is least likely to make a users task disappear, which would be very bad for the user
+        return 'inProgress'
+
 # ignore categories, isReminderOn, hasAttachments, urgency, imask, parent, id, depends, wait, tags, recur, project, until  
 def convert_tw_to_microsoft_todo(tw_item: TwItem) -> MicrosoftTodoSide:
     return_value = MicrosoftTodoSide()
     # return title from description
     return_value.title = tw_item['description']
     # return task_status from status
-    return_value.task_status = tw_item['status']
+    return_value.task_status = tw_status_to_ms_todo_status(tw_item['status'])
     # return start_date from start
     return_value.start_date = tw_item['start']
     # return created_date from entry
@@ -50,7 +77,7 @@ def convert_microsoft_todo_to_tw(microsoft_todo_item: MicrosoftTodoTask) -> TwIt
     # return title from description
     return_value['description'] = microsoft_todo_item.title
     # return task_status from status
-    return_value['status'] = microsoft_todo_item.task_status
+    return_value['status'] = ms_todo_status_to_tw_status(microsoft_todo_item.task_status)
     # return start_date from start
     return_value['start'] = microsoft_todo_item.start_date
     # return created_date from entry
