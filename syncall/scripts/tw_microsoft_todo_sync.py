@@ -76,10 +76,10 @@ import pprint
 @opt_combination("TW", "Notion")
 @opt_list_combinations("TW", "Microsoft Todo")
 @opt_custom_combination_savename("TW", "Microsoft Todo")
-@click.option("-t", "--token_location")
+@click.option("-T", "--token_location")
 @click.option("-l", "--list_name")
-@click.option("-T", "--tw-tags")
-@click.option("-p", "--tw-project")
+@opt_tw_tags()
+@opt_tw_project()
 @opt_resolution_strategy()
 #@click.argument('token')
 #@opt_resolution_strategy()
@@ -116,7 +116,9 @@ def main(verbose: int,
         if write_token:
             token_file.close()
             token_file = open(token_location, "w")
-            token_file.write(client_id + "\n" + client_secret + "\n" + token_json)
+            token_file.write(client_id + "\n" + client_secret + "\n" + json.dumps(token_json))
+            print('token_json=', token_json)
+            print('json.dumps(token_json)=', json.dumps(token_json))
             token_file.close()
             # Re-open as read only, just in case other parts of the script want to read from the file
             token_file = open(token_location, "r")
@@ -139,17 +141,17 @@ def main(verbose: int,
     # ignore categories, isReminderOn, hasAttachments, urgency, imask, parent, id, depends, wait, tags, recur, project, until  
     try:
         with Aggregator(
-            side_A=microsoft_todo_side,
-            side_B=tw_side,
-            converter_B_to_A=convert_tw_to_microsoft_todo,
-            converter_A_to_B=convert_microsoft_todo_to_tw,
+            side_A=tw_side,
+            side_B=microsoft_todo_side,
+            converter_B_to_A=convert_microsoft_todo_to_tw,
+            converter_A_to_B=convert_tw_to_microsoft_todo,
             resolution_strategy=get_resolution_strategy(
-                resolution_strategy, side_A_type=type(microsoft_todo_side), side_B_type=type(tw_side)
+                resolution_strategy, side_A_type=type(tw_side), side_B_type=type(microsoft_todo_side)
             ),
             config_fname=combination_name,
             ignore_keys=(
-                ('task_id', 'categories', 'isReminderOn', 'hasAttachments'),
-                ('urgency', 'imask', 'parent', 'id', 'depends', 'wait', 'tags', 'recur', 'project', 'until'),
+                ('urgency', 'imask', 'parent', 'depends', 'wait', 'recur', 'project', 'until'),
+                ('categories', 'isReminderOn', 'hasAttachments'),
             ),
         ) as aggregator:
             aggregator.sync()

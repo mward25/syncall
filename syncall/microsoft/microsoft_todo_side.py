@@ -13,7 +13,7 @@ class Dict2Class(object):
         for key in my_dict:
             setattr(self, key, my_dict[key])
 
-def str_to_token(input_str: str):
+def str_to_token(input_str: str) -> dict:
     return json.loads(input_str)
 
 def extract_list_with_name(name_to_get: str, input_list: list):
@@ -60,10 +60,15 @@ class MicrosoftTodoSide(SyncSide):
             redirect_resp = input(f'Go here and authorize:\n{auth_url}\n\nPaste the full redirect URL below:\n')
             token = ToDoConnection.get_token(client_id, client_secret, redirect_resp)
             self._token = token
-        elif type(token) is dict:
+        elif type(token) is str:
+            print("was ", type(token))
+            token = json.loads(token)
             self._token = token
+            print("token is now however ", type(token))
         else:
-            self._token = str_to_token(token)
+            print("was not str, but it was", type(token))
+            self._token = token
+        
         self._todo_client = pymstodo.ToDoConnection(client_id=client_id, client_secret=client_secret, token=self._token)
         
         self._list_id = extract_list_with_name(self._list_name, self._todo_client.get_lists()).list_id
@@ -100,7 +105,7 @@ class MicrosoftTodoSide(SyncSide):
         """
         self._todo_client.delete_task(list_id=self._list_id, task_id=item_id)
      
-    def update_item(self, item_id: ID, **changes):
+    def update_item(self, item_id: ID, **item):
         """Update with the given item.
         :param item_id : ID of item to update
         :param changes: Keyword only parameters that are to change in the item

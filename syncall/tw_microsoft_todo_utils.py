@@ -12,15 +12,16 @@ def priority_to_importance(importance):
     elif importance == '':
         return 'normal'
 
+# always return medium priority, and let taskwarriors urgency handle how important tasks are
 def importance_to_priority(priority):
     if priority == 'high':
-        return 'H'
+        return 'M'
     elif priority == 'normal':
         return 'M'
     elif priority == 'low':
-        return 'L'
-    elif priority == None:
-        return 'L'
+        return 'M'
+    elif priority == '':
+        return 'M'
 
 def ms_todo_status_to_tw_status(ms_todo_status):
     if ms_todo_status == 'notStarted':
@@ -51,52 +52,116 @@ def tw_status_to_ms_todo_status(tw_status):
 
 # ignore categories, isReminderOn, hasAttachments, urgency, imask, parent, id, depends, wait, tags, recur, project, until  
 def convert_tw_to_microsoft_todo(tw_item: TwItem) -> MicrosoftTodoSide:
-    return_value = MicrosoftTodoSide()
-    # return title from description
-    return_value.title = tw_item['description']
-    # return task_status from status
-    return_value.task_status = tw_status_to_ms_todo_status(tw_item['status'])
-    # return start_date from start
-    return_value.start_date = tw_item['start']
+    return_value = MicrosoftTodoTask()
+    try:
+        # return title from description
+        return_value.title = tw_item['description']
+    except:
+        print('no description btw') 
+    
+    try:
+        # return task_status from status
+        return_value.status = tw_status_to_ms_todo_status(tw_item['status'])
+    except:
+        print('no status btw')
+
+    try:
+        # return start_date from start
+        return_value.start_date = tw_item['start']
+    except:
+        print('no start btw') 
+
     # return created_date from entry
-    return_value.created_date = tw_item['entry']
+    try:
+        return_value.created_date = tw_item['entry']
+    except:
+        print('no entry btw') 
+
     # return due_date from due
-    return_value.due_date = tw_item['due']
-    # return completed_date from end
-    return_value.completed_date = tw_item['completed_date']
+    try:
+        return_value.due_date = tw_item['due']
+    except:
+        print('no due btw')
+
+    try:
+        # return completed_date from end
+        return_value.completed_date = tw_item['end']
+    except:
+        print('no completed_date btw') 
+
     # return last_mod_date from modified
-    return_value.last_mod_date = tw_item['last_mod_date']
-    # return importance from priority
-    return_value.importance = priority_to_importance(tw_item['priority'])
-    # add uuid  to body_text under key "uuid"
-    return_value.body_text = "uuid: " + tw_item['uuid']
+    try:
+        return_value.last_mod_date = tw_item['last_mod_date']
+    except:
+        print('no last_mod_date btw') 
+
+    try:
+        # return importance from priority
+        return_value.importance = priority_to_importance(tw_item['priority'])
+    except:
+        print('no priority btw')
+
+    try:
+        # add uuid  to body_text under key "uuid"
+        return_value.body_text = "uuid: " + tw_item['id']
+    except:
+        print('no uuid btw') 
+
     return return_value
 
 def convert_microsoft_todo_to_tw(microsoft_todo_item: MicrosoftTodoTask) -> TwItem:
     return_value = dict()
-    # return title from description
-    return_value['description'] = microsoft_todo_item.title
-    # return task_status from status
-    return_value['status'] = ms_todo_status_to_tw_status(microsoft_todo_item.task_status)
-    # return start_date from start
-    return_value['start'] = microsoft_todo_item.start_date
+    try:
+        # return title from description
+        return_value['description'] = microsoft_todo_item.title
+    except:
+        print('no description btw') 
+
+    try:
+        # return task_status from status
+        return_value['status'] = ms_todo_status_to_tw_status(microsoft_todo_item.task_status)
+    except:
+        print('no status btw') 
+
+    try:
+        # return start_date from start
+        return_value['start'] = microsoft_todo_item.start_date
+    except:
+        print('no start btw')
+
     # return created_date from entry
-    return_value['entry'] = microsoft_todo_item.created_date
+    try:
+        return_value['entry'] = microsoft_todo_item.created_date
+    except:
+        print('no entry btw') 
+
     # return due_date from due
-    return_value['due'] = microsoft_todo_item.due_date
-    # return completed_date from end
+    try:
+        return_value['due'] = microsoft_todo_item.due_date
+        # return completed_date from end
+    except:
+        print('no due btw') 
+
     return_value['end'] = microsoft_todo_item.completed_date
-    # return last_mod_date from modified
-    return_value['modified'] = microsoft_todo_item.last_mod_date
+    try:
+        # return last_mod_date from modified
+        return_value['modified'] = microsoft_todo_item.last_mod_date
+    except:
+        print('no modified btw') 
+
     # return importance from priority
-    return_value['priority'] = importance_to_priority(microsoft_todo_item.importance)
-    # add uuid  to body_text under key "uuid"
-    body_text_split_tmp = microsoft_todo_item.body_text.split('uuid:')
+    try:
+        return_value['priority'] = importance_to_priority(microsoft_todo_item.importance)
+        # add uuid  to body_text under key "uuid"
+    except:
+        print('no priority btw') 
+
+    body_text_split_tmp = microsoft_todo_item.body_text.split('id:')
     print('body_text_split_tmp: ', body_text_split_tmp)
     if len(body_text_split_tmp) >= 2:
         body_text_split_tmp = body_text_split_tmp[1]
         body_text_split_tmp = body_text_split_tmp.split('\n')
-        return_value['uuid'] = body_text_split_tmp[0]
+        return_value['id'] = body_text_split_tmp[0]
     return return_value
 
 # add depends  to body_text under key "depends"
