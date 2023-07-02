@@ -239,7 +239,18 @@ class Aggregator:
             f" {helper}..."
         )
 
-        side.update_item(item_id, **item)
+        print("item: ", item)
+        print("type(item): ", type(item))
+        #print("\n\n**item: ", **item)
+
+        tmp_dict = {**item}
+        print("tmp_dict: ", tmp_dict)
+        # Remove all instances of None
+        try:
+            tmp_dict.pop(None)
+        except KeyError:
+            print("no none, this is fine")
+        side.update_item(item_id=item_id, **tmp_dict)
         pickle_dump(item, serdes_dir / item_id)
 
     def deleter_to(self, item_id: ID, helper: SideHelper):

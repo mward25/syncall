@@ -1522,7 +1522,7 @@ requests_oauthlib = ">=1.3.0"
 type = "git"
 url = "https://github.com/mward25/pymstodo.git"
 reference = "make_things_subscriptable"
-resolved_reference = "a296373c212a7d79e6e0cdc891f55aee53d6b327"
+resolved_reference = "88afe7971ec8a090a11a0c29d23e9b32dcc7c89d"
 
 [[package]]
 name = "pyparsing"

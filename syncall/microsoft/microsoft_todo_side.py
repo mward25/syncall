@@ -105,13 +105,16 @@ class MicrosoftTodoSide(SyncSide):
         """
         self._todo_client.delete_task(list_id=self._list_id, task_id=item_id)
      
-    def update_item(self, item_id: ID, **item):
+    def update_item(self, item_id: ID, **changes):
         """Update with the given item.
         :param item_id : ID of item to update
         :param changes: Keyword only parameters that are to change in the item
         .. warning:: The item must already be present
         """
-        self._todo_client.update_task(task_id=item_id, list_id=self._list_id, **changes)
+        try:
+            self._todo_client.update_task(task_id=item_id, list_id=self._list_id, **changes)
+        except:
+            print("problems in update_item in microsoft_todo_side 🪟 😥 ")
      
     def add_item(self, item: MicrosoftTodoTask) -> MicrosoftTodoTask:
         """Add a new item.
